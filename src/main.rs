@@ -27,20 +27,35 @@ fn prune_candidates(guess: &String, response: &String, candidates: &Vec<String>)
         let mut keep = true;
 
         /// Check direct matches
-        for ((g, r), c) in guess.chars().zip(response.chars()).zip(candidate.chars()) {
+        for ((idx_g, (g, r)), (idx_c, c)) in guess
+            .chars()
+            .zip(response.chars())
+            .enumerate()
+            .zip(candidate.chars().enumerate())
+        {
             match r {
                 'g' => {
                     keep &= g == c;
                 }
+                'y' => {
+                    keep &= candidate.chars().any(|c| c == g)
+                        && guess.chars().nth(idx_g) != candidate.chars().nth(idx_c);
+                }
                 'b' => {
                     // Needs a special case for words with two letters
-                    keep &= !candidate.chars().any(|c| c == g);
-                }
-                'y' => {
-                    keep &= candidate.chars().any(|c| c == g);
+                    let c_count = candidate.matches(g).count();
+                    let g_count = guess.matches(g).count();
+
+                    // keep &= !candidate.chars().any(|c| c == g);
+                    keep &=  !(c_count > g_count);
                 }
                 _ => {}
             }
+        }
+
+        // Dont keep incorrect guesses
+        if candidate == guess {
+            keep = false;
         }
 
         if keep {
@@ -67,7 +82,7 @@ fn optimial_guess(candidates: &Vec<String>, dictionary: &Vec<String>) -> String 
 
     for word in dictionary.iter() {
         let res = worst_cast_words_left(word, &candidates);
-        if res < min_options || (res == min_options && candidates.iter().any(|cad| cad ==word)) {
+        if res < min_options || (res == min_options && candidates.iter().any(|cad| cad == word)) {
             best_word = word.clone();
             min_options = res;
         }
@@ -92,7 +107,7 @@ fn word_votes(word: &String, guess: &String) -> usize {
 }
 
 fn matching_votes(word: &String, word_list: &Vec<String>) -> Vec<usize> {
-    let mut votes:Vec<usize> = vec![0; usize::pow(3, word.len().try_into().unwrap())];
+    let mut votes: Vec<usize> = vec![0; usize::pow(3, word.len().try_into().unwrap())];
     for guess in word_list {
         votes[word_votes(word, guess)] += 1;
     }
