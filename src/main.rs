@@ -3,6 +3,8 @@ use std::io::{self, prelude::*};
 
 const WORD_SOURCE: &str = "scrabble.txt";
 
+// TODO: Bug when a the guess is a complete miss
+
 fn main() {
     let dictionary = load_dictionary(WORD_SOURCE);
     let mut candidates = dictionary.clone();
@@ -90,6 +92,7 @@ fn optimial_guess(candidates: &Vec<String>, dictionary: &Vec<String>) -> String 
     best_word
 }
 
+// These outcomes are not computed correctly
 fn word_votes(word: &String, guess: &String) -> usize {
     let mut out = 0;
     for ((idx, w), g) in word.chars().enumerate().zip(guess.chars()) {
