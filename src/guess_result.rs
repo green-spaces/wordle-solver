@@ -1,8 +1,7 @@
 use std::str::FromStr;
-
 use super::error::{Error, ParseCause};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct GuessResult(String);
 
 impl GuessResult {

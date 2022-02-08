@@ -1,7 +1,6 @@
-use std::fs::File;
-use std::io::{self, prelude::*};
 
 use wordle_solver::guess_result::GuessResult;
+use wordle_solver::io::{read_wordle_output, load_dictionary};
 
 const WORD_SOURCE: &str = "scrabble.txt";
 
@@ -17,9 +16,9 @@ fn main() {
         println!(
             "{} => {}",
             guess,
-            worst_cast_words_left(&guess, &candidates)
+            entropy_votes(&guess, &candidates)
         );
-        let response = read_input();
+        let response = read_wordle_output();
         candidates = prune_candidates(&guess, response.into_inner(), &candidates);
         println!("{:?}", candidates);
     }
@@ -50,7 +49,7 @@ fn prune_candidates(guess: &str, response: &str, candidates: &[String]) -> Vec<S
                     let c_count = candidate.matches(g).count();
                     let g_count = guess.matches(g).count();
 
-                    keep &=  c_count <= g_count;
+                    keep &=  c_count < g_count;
                 }
                 _ => {}
             }
@@ -69,29 +68,16 @@ fn prune_candidates(guess: &str, response: &str, candidates: &[String]) -> Vec<S
     new_candidates
 }
 
-fn read_input() -> GuessResult {
-    let mut buffer = String::new();
-    while buffer.parse::<GuessResult>().is_err() {
-        buffer = "".to_string();
-        println!("Enter wordle result: g = green, y = yellow, b = black");
-        io::stdin().read_line(&mut buffer).unwrap();
-    }
-    buffer.parse::<GuessResult>().unwrap()
-}
-
 fn optimial_guess(candidates: &[String], dictionary: &[String]) -> String {
-    if candidates.len() == 1 {
-        return candidates[0].clone();
-    }
 
     let mut best_word: String = dictionary[0].clone();
-    let mut min_options = usize::MAX;
+    let mut max_entropy = f32::MIN;
 
     for word in dictionary.iter() {
-        let res = worst_cast_words_left(word, candidates);
-        if res < min_options || (res == min_options && candidates.iter().any(|cad| cad == word)) {
+        let res = entropy_votes(word, candidates);
+        if res > max_entropy || (res == max_entropy && candidates.iter().any(|cad| cad == word)) {
             best_word = word.clone();
-            min_options = res;
+            max_entropy = res;
         }
     }
     best_word
@@ -122,24 +108,15 @@ fn matching_votes(word: &str, word_list: &[String]) -> Vec<usize> {
     votes
 }
 
+fn entropy(votes: &[usize]) -> f32 {
+    let incorrect = &votes[..votes.len()];
+    let count = incorrect.iter().sum::<usize>() as f32;
+    incorrect.into_iter().map(| v| - (*v as f32)/count * f32::ln((*v as f32 + 0.01) / count )).sum::<f32>()
+}
+
 /// Returns the worst case remaining number of words
-fn worst_cast_words_left(word: &str, word_list: &[String]) -> usize {
+fn entropy_votes(word: &str, word_list: &[String]) -> f32 {
     let votes = matching_votes(word, word_list);
-    *votes.iter().max().unwrap()
-    // votes.into_iter().map(|v| v * usize::ln(v + 1.0)).sum::<usize>()
+    entropy(&votes)
 }
 
-fn load_dictionary(file: &str) -> Vec<String> {
-    let file = File::open(file).unwrap();
-    let lines = io::BufReader::new(file).lines();
-
-    let mut flw: Vec<String> = Vec::new();
-
-    for line in lines.flatten() {
-        if line.len() == 5 {
-            flw.push(line);
-        }
-    }
-
-    flw
-}
