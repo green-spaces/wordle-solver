@@ -10,7 +10,7 @@ fn main() {
     let mut candidates = dictionary.clone();
     println!("Five Letter Words: {}", dictionary.len());
 
-    while candidates.len() != 0 {
+    while !candidates.is_empty() {
         let guess = optimial_guess(&candidates, &dictionary);
         println!(
             "{} => {}",
@@ -23,12 +23,12 @@ fn main() {
     }
 }
 
-fn prune_candidates(guess: &String, response: &String, candidates: &Vec<String>) -> Vec<String> {
+fn prune_candidates(guess: &str, response: &str, candidates: &[String]) -> Vec<String> {
     let mut new_candidates = Vec::new();
     for candidate in candidates {
         let mut keep = true;
 
-        /// Check direct matches
+        // Check direct matches
         for ((idx_g, (g, r)), (idx_c, c)) in guess
             .chars()
             .zip(response.chars())
@@ -48,8 +48,7 @@ fn prune_candidates(guess: &String, response: &String, candidates: &Vec<String>)
                     let c_count = candidate.matches(g).count();
                     let g_count = guess.matches(g).count();
 
-                    // keep &= !candidate.chars().any(|c| c == g);
-                    keep &=  !(c_count > g_count);
+                    keep &=  c_count <= g_count;
                 }
                 _ => {}
             }
@@ -74,7 +73,7 @@ fn read_input() -> String {
     buffer
 }
 
-fn optimial_guess(candidates: &Vec<String>, dictionary: &Vec<String>) -> String {
+fn optimial_guess(candidates: &[String], dictionary: &[String]) -> String {
     if candidates.len() == 1 {
         return candidates[0].clone();
     }
@@ -83,7 +82,7 @@ fn optimial_guess(candidates: &Vec<String>, dictionary: &Vec<String>) -> String 
     let mut min_options = usize::MAX;
 
     for word in dictionary.iter() {
-        let res = worst_cast_words_left(word, &candidates);
+        let res = worst_cast_words_left(word, candidates);
         if res < min_options || (res == min_options && candidates.iter().any(|cad| cad == word)) {
             best_word = word.clone();
             min_options = res;
@@ -93,7 +92,7 @@ fn optimial_guess(candidates: &Vec<String>, dictionary: &Vec<String>) -> String 
 }
 
 // These outcomes are not computed correctly
-fn word_votes(word: &String, guess: &String) -> usize {
+fn word_votes(word: &str, guess: &str) -> usize {
     let mut out = 0;
     for ((idx, w), g) in word.chars().enumerate().zip(guess.chars()) {
         let coeff;
@@ -109,7 +108,7 @@ fn word_votes(word: &String, guess: &String) -> usize {
     out
 }
 
-fn matching_votes(word: &String, word_list: &Vec<String>) -> Vec<usize> {
+fn matching_votes(word: &str, word_list: &[String]) -> Vec<usize> {
     let mut votes: Vec<usize> = vec![0; usize::pow(3, word.len().try_into().unwrap())];
     for guess in word_list {
         votes[word_votes(word, guess)] += 1;
@@ -118,7 +117,7 @@ fn matching_votes(word: &String, word_list: &Vec<String>) -> Vec<usize> {
 }
 
 /// Returns the worst case remaining number of words
-fn worst_cast_words_left(word: &String, word_list: &Vec<String>) -> usize {
+fn worst_cast_words_left(word: &str, word_list: &[String]) -> usize {
     let votes = matching_votes(word, word_list);
     *votes.iter().max().unwrap()
     // votes.into_iter().map(|v| v * usize::ln(v + 1.0)).sum::<usize>()
@@ -130,11 +129,9 @@ fn load_dictionary(file: &str) -> Vec<String> {
 
     let mut flw: Vec<String> = Vec::new();
 
-    for line in lines {
-        if let Ok(word) = line {
-            if word.len() == 5 {
-                flw.push(word);
-            }
+    for line in lines.flatten() {
+        if line.len() == 5 {
+            flw.push(line);
         }
     }
 

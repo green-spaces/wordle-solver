@@ -23,7 +23,7 @@ impl FromStr for GuessResult {
       }
     }
 
-    return Ok(GuessResult(res))
+    Ok(GuessResult(res))
   }
 }
 
@@ -45,7 +45,6 @@ mod tests {
       let parse_res = "bbbbbb".parse::<GuessResult>();
       assert!(matches!(parse_res, Err(Error::Parse(ParseCause::InvalidLength))));
     }
- 
 
     #[test]
     fn all_b_str() {
