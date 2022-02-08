@@ -1,6 +1,8 @@
 use std::fs::File;
 use std::io::{self, prelude::*};
 
+use wordle_solver::guess_result::GuessResult;
+
 const WORD_SOURCE: &str = "scrabble.txt";
 
 // TODO: Bug when a the guess is a complete miss
@@ -18,7 +20,7 @@ fn main() {
             worst_cast_words_left(&guess, &candidates)
         );
         let response = read_input();
-        candidates = prune_candidates(&guess, &response, &candidates);
+        candidates = prune_candidates(&guess, response.into_inner(), &candidates);
         println!("{:?}", candidates);
     }
 }
@@ -67,10 +69,14 @@ fn prune_candidates(guess: &str, response: &str, candidates: &[String]) -> Vec<S
     new_candidates
 }
 
-fn read_input() -> String {
+fn read_input() -> GuessResult {
     let mut buffer = String::new();
-    io::stdin().read_line(&mut buffer).unwrap();
-    buffer
+    while buffer.parse::<GuessResult>().is_err() {
+        buffer = "".to_string();
+        println!("Enter wordle result: g = green, y = yellow, b = black");
+        io::stdin().read_line(&mut buffer).unwrap();
+    }
+    buffer.parse::<GuessResult>().unwrap()
 }
 
 fn optimial_guess(candidates: &[String], dictionary: &[String]) -> String {

@@ -5,10 +5,18 @@ use super::error::{Error, ParseCause};
 #[derive(Debug, PartialEq)]
 pub struct GuessResult(String);
 
+impl GuessResult {
+  pub fn into_inner(&self) -> &str {
+    &self.0
+  }
+}
+
 impl FromStr for GuessResult {
   type Err = Error;
 
   fn from_str(s: &str) -> Result<Self, Self::Err> {
+    let s = s.trim();
+
     if s.len() != 5 {
       return Err(Self::Err::Parse(ParseCause::InvalidLength))
     }
@@ -67,6 +75,12 @@ mod tests {
     #[test]
     fn valid_mixed_str() {
       let parse_res = "gbygb".parse::<GuessResult>().unwrap();
+      assert_eq!(parse_res, GuessResult(String::from("gbygb")));
+    }
+
+    #[test]
+    fn legal_str_trailing_whitespace() {
+      let parse_res = "gbygb\n".parse::<GuessResult>().unwrap();
       assert_eq!(parse_res, GuessResult(String::from("gbygb")));
     }
   }
