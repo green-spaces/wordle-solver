@@ -10,6 +10,10 @@ edition = "2021"
 [dev-dependencies]
 criterion = "0.3"
 
+# [[bench]]
+# name = "outcome_bench"
+# harness = false
+
 [[bench]]
-name = "outcome_bench"
+name = "first_guess"
 harness = false

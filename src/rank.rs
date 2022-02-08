@@ -2,22 +2,24 @@ use super::guess_result::GuessResult;
 
 pub fn outcome(guess: &str, target: &str) -> GuessResult {
     let mut res = String::new();
+
     for (idx, (g, t)) in guess.chars().zip(target.chars()).enumerate() {
-        let g_count_so_far = guess
-            .chars()
-            .enumerate()
-            .filter(|(idx2, g2)| *idx2 <= idx && *g2 == g)
-            .count();
-        let count_of_g_in_t = target.chars().filter(|t2| *t2 == g).count();
         if g == t {
             res.push('g');
+        } else if target.chars().all(|tb| tb != g) {
+            res.push('b');
         } else if guess
             .chars()
             .zip(target.chars())
             // excluding target character that match their guess character
             .filter(|(g1, t1)| g1 != t1)
             .any(|(_, t2)| g == t2)
-            && (g_count_so_far <= count_of_g_in_t)
+            && (guess
+                .chars()
+                .enumerate()
+                .filter(|(idx2, g2)| *idx2 <= idx && *g2 == g)
+                .count()
+                <= target.chars().filter(|t2| *t2 == g).count())
         {
             res.push('y');
         } else {
