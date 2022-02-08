@@ -1,5 +1,5 @@
 use wordle_solver::io::{load_dictionary, read_wordle_output};
-use wordle_solver::rank::overlap;
+use wordle_solver::rank::outcome;
 
 const WORD_SOURCE: &str = "scrabble.txt";
 
@@ -80,7 +80,8 @@ fn optimial_guess(candidates: &[String], dictionary: &[String]) -> String {
 fn matching_votes(word: &str, word_list: &[String]) -> Vec<usize> {
     let mut votes: Vec<usize> = vec![0; usize::pow(3, word.len().try_into().unwrap())];
     for guess in word_list {
-        votes[overlap(word, guess)] += 1;
+
+        votes[outcome(word, guess).score()] += 1;
     }
     votes
 }

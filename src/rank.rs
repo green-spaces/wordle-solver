@@ -1,22 +1,5 @@
 use super::guess_result::GuessResult;
 
-// These outcomes are not computed correctly
-pub fn overlap(word: &str, guess: &str) -> usize {
-    let mut out = 0;
-    for ((idx, w), g) in word.chars().enumerate().zip(guess.chars()) {
-        let coeff;
-        if w == g {
-            coeff = 2
-        } else if guess.chars().any(|g| g == w) && guess.chars().nth(idx).unwrap() != w {
-            coeff = 1;
-        } else {
-            coeff = 0;
-        }
-        out += coeff * usize::pow(3, idx.try_into().unwrap());
-    }
-    out
-}
-
 pub fn outcome(guess: &str, target: &str) -> GuessResult {
     let mut res = String::new();
     for (idx, (g, t)) in guess.chars().zip(target.chars()).enumerate() {
