@@ -12,6 +12,18 @@ impl GuessResult {
     pub fn into_inner(&self) -> &str {
         &self.0
     }
+
+    pub fn score(&self) -> usize {
+        self.0.chars().enumerate().fold(0, |acc, (idx, c)| {
+            let coeff = match c {
+                'g' => 2,
+                'y' => 1,
+                _ => 0,
+            };
+
+            acc + (coeff * usize::pow(3, idx.try_into().unwrap()))
+        })
+    }
 }
 
 impl FromStr for GuessResult {
@@ -91,6 +103,28 @@ mod tests {
         fn legal_str_trailing_whitespace() {
             let parse_res = "gbygb\n".parse::<GuessResult>().unwrap();
             assert_eq!(parse_res, GuessResult(String::from("gbygb")));
+        }
+    }
+
+    mod score {
+        use super::*;
+
+        #[test]
+        fn bbbbb() {
+            let guess = GuessResult::new("bbbbb");
+            assert_eq!(guess.score(), 0);
+        }
+
+        #[test]
+        fn ggggg() {
+            let guess = GuessResult::new("ggggg");
+            assert_eq!(guess.score(), 242);
+        }
+
+        #[test]
+        fn yyyyy() {
+            let guess = GuessResult::new("yyyyy");
+            assert_eq!(guess.score(), 121);
         }
     }
 }
