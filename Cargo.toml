@@ -9,6 +9,7 @@ edition = "2021"
 
 [dev-dependencies]
 criterion = "0.3"
+lazy_static = "1.4.0"
 
 # [[bench]]
 # name = "outcome_bench"
