@@ -22,7 +22,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("sample-size-example");
     // Configure Criterion.rs to detect smaller differences and increase sample size to improve
     // precision and counteract the resulting noise.
-    group.significance_level(0.1).sample_size(100);
+    group.significance_level(0.1).sample_size(60);
     group.bench_function("outcome", |b| b.iter(|| time_to_first_guess(black_box(2))));
     group.finish();
 }

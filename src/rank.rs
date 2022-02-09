@@ -29,6 +29,35 @@ pub fn outcome(guess: &str, target: &str) -> GuessResult {
     GuessResult::new(res)
 }
 
+pub fn outcome_score(guess: &str, target: &str) -> usize {
+    let mut res = 0;
+
+    for (idx, (g, t)) in guess.chars().zip(target.chars()).enumerate() {
+        if g == t {
+            res += 2 * usize::pow(3, idx.try_into().unwrap());
+        } else if target.chars().all(|tb| tb != g) {
+            continue;
+        } else {
+            let exclued_matches_target_count = guess
+                .chars()
+                .zip(target.chars())
+                // Remove characters to be marked greem
+                .filter(|(g1, t1)| g1 != t1 && g == *t1)
+                .count();
+
+            let guess_count = guess
+                .chars()
+                .enumerate()
+                .filter(|(idx2, g2)| *idx2 <= idx && *g2 == g)
+                .count();
+
+            if guess_count <= exclued_matches_target_count && guess_count != 0 {
+                res += usize::pow(3, idx.try_into().unwrap());
+            }
+        }
+    }
+    res
+}
 
 #[cfg(test)]
 mod tests {
@@ -46,6 +75,7 @@ mod tests {
                 let guess = "tares";
                 let expected = GuessResult::new("bbbgb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
 
             #[test]
@@ -53,6 +83,7 @@ mod tests {
                 let guess = "indol";
                 let expected = GuessResult::new("bbgyb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
 
             #[test]
@@ -60,6 +91,7 @@ mod tests {
                 let guess = "coxed";
                 let expected = GuessResult::new("ggygy".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
 
             #[test]
@@ -67,6 +99,7 @@ mod tests {
                 let guess = "codex";
                 let expected = GuessResult::new("ggggg".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
         }
 
@@ -79,6 +112,7 @@ mod tests {
                 let guess = "tares";
                 let expected = GuessResult::new("bybyb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
 
             #[test]
@@ -86,6 +120,7 @@ mod tests {
                 let guess = "aland";
                 let expected = GuessResult::new("bbgbb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
 
             #[test]
@@ -93,6 +128,7 @@ mod tests {
                 let guess = "hempy";
                 let expected = GuessResult::new("bgbyb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
 
             #[test]
@@ -100,6 +136,7 @@ mod tests {
                 let guess = "peage";
                 let expected = GuessResult::new("gggbg".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
 
             #[test]
@@ -107,6 +144,7 @@ mod tests {
                 let guess = "peace";
                 let expected = GuessResult::new("ggggg".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
         }
 
@@ -119,6 +157,7 @@ mod tests {
                 let guess = "tares";
                 let expected = GuessResult::new("bbyyy".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
 
             #[test]
@@ -126,6 +165,7 @@ mod tests {
                 let guess = "poise";
                 let expected = GuessResult::new("gybgg".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
 
             #[test]
@@ -133,6 +173,7 @@ mod tests {
                 let guess = "stats";
                 let expected = GuessResult::new("ybbbb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
 
             #[test]
@@ -140,6 +181,7 @@ mod tests {
                 let guess = "prose";
                 let expected = GuessResult::new("ggggg".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
+                assert_eq!(outcome_score(guess, TARGET), expected.score())
             }
         }
     }

@@ -1,4 +1,4 @@
-use super::rank::outcome;
+use super::rank::outcome_score;
 
 pub fn optimial_guess<'a>(candidates: &[String], dictionary: &'a [String]) -> &'a String {
     let mut best_word: &String = &dictionary[0];
@@ -23,20 +23,19 @@ pub fn entropy_votes(word: &str, word_list: &[String], votes: &mut [f32]) -> f32
 }
 
 fn matching_votes(word: &str, word_list: &[String], votes: &mut [f32]) {
-  for i in 0..votes.len() {
-    votes[i] = 0.0;
-  }
+    for i in 0..votes.len() {
+        votes[i] = 0.0;
+    }
 
-  for guess in word_list {
-        votes[outcome(word, guess).score()] += 1.0;
+    for guess in word_list {
+        votes[outcome_score(word, guess)] += 1.0;
     }
 }
 
 fn entropy(votes: &[f32]) -> f32 {
-    let incorrect = &votes[..votes.len()];
-    let log_count = f32::ln(incorrect.iter().sum::<f32>()) ;
-    incorrect
+    let count: f32 = votes.iter().sum();
+    votes
         .iter()
-        .map(|v| - *v * (f32::ln(*v ) - log_count))
+        .map(|v| -*v / count * (f32::ln(*v / count + 0.001)))
         .sum::<f32>()
 }
