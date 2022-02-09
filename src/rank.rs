@@ -46,7 +46,8 @@ pub fn outcome_score(guess: &str, target: &str) -> usize {
                 .filter(|(idx2, g2)| *idx2 <= idx && *g2 == g)
                 .count();
 
-            let exclued_matches_target_count = zipped_words.clone()
+            let exclued_matches_target_count = zipped_words
+                .clone()
                 // Remove characters to be marked greem
                 .filter(|(g1, t1)| g1 != t1 && g == *t1)
                 .count();
