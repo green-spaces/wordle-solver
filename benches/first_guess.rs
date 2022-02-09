@@ -6,7 +6,6 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use wordle_solver::guess_generator::optimial_guess;
 use wordle_solver::io::load_dictionary;
 
-// const WORD_SOURCE: &str = "less-english-words.txt";
 const WORD_SOURCE: &str = "scrabble.txt";
 
 lazy_static! {

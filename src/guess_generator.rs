@@ -39,7 +39,7 @@ fn calculate_outcome_freq(word: &str, word_list: &[String]) -> Vec<f32> {
     let mut outcome_freq: Vec<f32> = vec![0.0; usize::pow(3, 5)];
     let mut rng = rand::thread_rng();
     let num_of_words = word_list.len() as f32;
-    let min_sample = 3.0 * f32::powf(3.0, 5.0);
+    let min_sample = 2.0 * f32::powf(3.0, 5.0);
 
     let sub_list= word_list
         .iter()
