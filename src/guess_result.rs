@@ -5,8 +5,8 @@ use std::str::FromStr;
 pub struct GuessResult(String);
 
 impl GuessResult {
-    pub fn new(s: &str) -> Self {
-        Self(s.to_string())
+    pub fn new(s: String) -> Self {
+        Self(s)
     }
 
     pub fn into_inner(&self) -> &str {
@@ -78,31 +78,31 @@ mod tests {
         #[test]
         fn all_b_str() {
             let parse_res = "bbbbb".parse::<GuessResult>().unwrap();
-            assert_eq!(parse_res, GuessResult(String::from("bbbbb")));
+            assert_eq!(parse_res, GuessResult(String::from("bbbbb".to_string())));
         }
 
         #[test]
         fn all_y_str() {
             let parse_res = "yyyyy".parse::<GuessResult>().unwrap();
-            assert_eq!(parse_res, GuessResult(String::from("yyyyy")));
+            assert_eq!(parse_res, GuessResult(String::from("yyyyy".to_string())));
         }
 
         #[test]
         fn all_g_str() {
             let parse_res = "ggggg".parse::<GuessResult>().unwrap();
-            assert_eq!(parse_res, GuessResult(String::from("ggggg")));
+            assert_eq!(parse_res, GuessResult(String::from("ggggg".to_string())));
         }
 
         #[test]
         fn valid_mixed_str() {
             let parse_res = "gbygb".parse::<GuessResult>().unwrap();
-            assert_eq!(parse_res, GuessResult(String::from("gbygb")));
+            assert_eq!(parse_res, GuessResult(String::from("gbygb".to_string())));
         }
 
         #[test]
         fn legal_str_trailing_whitespace() {
             let parse_res = "gbygb\n".parse::<GuessResult>().unwrap();
-            assert_eq!(parse_res, GuessResult(String::from("gbygb")));
+            assert_eq!(parse_res, GuessResult(String::from("gbygb".to_string())));
         }
     }
 
@@ -111,19 +111,19 @@ mod tests {
 
         #[test]
         fn bbbbb() {
-            let guess = GuessResult::new("bbbbb");
+            let guess = GuessResult::new("bbbbb".to_string());
             assert_eq!(guess.score(), 0);
         }
 
         #[test]
         fn ggggg() {
-            let guess = GuessResult::new("ggggg");
+            let guess = GuessResult::new("ggggg".to_string());
             assert_eq!(guess.score(), 242);
         }
 
         #[test]
         fn yyyyy() {
-            let guess = GuessResult::new("yyyyy");
+            let guess = GuessResult::new("yyyyy".to_string());
             assert_eq!(guess.score(), 121);
         }
     }

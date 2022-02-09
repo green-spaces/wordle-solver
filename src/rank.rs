@@ -1,21 +1,5 @@
 use super::guess_result::GuessResult;
 
-pub fn outcome2(guess: &str, target: &str) -> GuessResult {
-    let mut res = String::new();
-
-    // mark greens
-    guess.chars().zip(target.chars()).for_each(|(g, t)| {
-        if g == t {
-            res.push('g');
-        } else {
-            res.push('b');
-        }
-    });
-    
-
-    GuessResult::new(&res)
-}
-
 pub fn outcome(guess: &str, target: &str) -> GuessResult {
     let mut res = String::new();
 
@@ -42,7 +26,7 @@ pub fn outcome(guess: &str, target: &str) -> GuessResult {
             res.push('b');
         }
     }
-    GuessResult::new(&res)
+    GuessResult::new(res)
 }
 
 
@@ -60,28 +44,28 @@ mod tests {
             #[test]
             fn round1() {
                 let guess = "tares";
-                let expected = GuessResult::new("bbbgb");
+                let expected = GuessResult::new("bbbgb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
 
             #[test]
             fn round2() {
                 let guess = "indol";
-                let expected = GuessResult::new("bbgyb");
+                let expected = GuessResult::new("bbgyb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
 
             #[test]
             fn round3() {
                 let guess = "coxed";
-                let expected = GuessResult::new("ggygy");
+                let expected = GuessResult::new("ggygy".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
 
             #[test]
             fn round4() {
                 let guess = "codex";
-                let expected = GuessResult::new("ggggg");
+                let expected = GuessResult::new("ggggg".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
         }
@@ -93,35 +77,35 @@ mod tests {
             #[test]
             fn round1() {
                 let guess = "tares";
-                let expected = GuessResult::new("bybyb");
+                let expected = GuessResult::new("bybyb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
 
             #[test]
             fn round2() {
                 let guess = "aland";
-                let expected = GuessResult::new("bbgbb");
+                let expected = GuessResult::new("bbgbb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
 
             #[test]
             fn round3() {
                 let guess = "hempy";
-                let expected = GuessResult::new("bgbyb");
+                let expected = GuessResult::new("bgbyb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
 
             #[test]
             fn round4() {
                 let guess = "peage";
-                let expected = GuessResult::new("gggbg");
+                let expected = GuessResult::new("gggbg".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
 
             #[test]
             fn round5() {
                 let guess = "peace";
-                let expected = GuessResult::new("ggggg");
+                let expected = GuessResult::new("ggggg".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
         }
@@ -133,28 +117,28 @@ mod tests {
             #[test]
             fn round1() {
                 let guess = "tares";
-                let expected = GuessResult::new("bbyyy");
+                let expected = GuessResult::new("bbyyy".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
 
             #[test]
             fn round2() {
                 let guess = "poise";
-                let expected = GuessResult::new("gybgg");
+                let expected = GuessResult::new("gybgg".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
 
             #[test]
             fn round3() {
                 let guess = "stats";
-                let expected = GuessResult::new("ybbbb");
+                let expected = GuessResult::new("ybbbb".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
 
             #[test]
             fn round4() {
                 let guess = "prose";
-                let expected = GuessResult::new("ggggg");
+                let expected = GuessResult::new("ggggg".to_string());
                 assert_eq!(outcome(guess, TARGET), expected);
             }
         }
