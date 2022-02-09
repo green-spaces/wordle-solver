@@ -1,7 +1,7 @@
 use super::guess_result::GuessResult;
 
 pub fn outcome(guess: &str, target: &str) -> GuessResult {
-    let mut res = String::new();
+    let mut res = String::with_capacity(guess.len());
 
     for (idx, (g, t)) in guess.chars().zip(target.chars()).enumerate() {
         if g == t {
