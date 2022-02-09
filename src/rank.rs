@@ -32,26 +32,26 @@ pub fn outcome(guess: &str, target: &str) -> GuessResult {
 pub fn outcome_score(guess: &str, target: &str) -> usize {
     let mut res = 0;
 
-    for (idx, (g, t)) in guess.chars().zip(target.chars()).enumerate() {
+    let zipped_words = guess.chars().zip(target.chars());
+
+    for (idx, (g, t)) in zipped_words.clone().enumerate() {
         if g == t {
             res += 2 * usize::pow(3, idx.try_into().unwrap());
-        } else if target.chars().all(|tb| tb != g) {
+        } else if target.chars().all(|t1| g != t1) {
             continue;
         } else {
-            let exclued_matches_target_count = guess
-                .chars()
-                .zip(target.chars())
-                // Remove characters to be marked greem
-                .filter(|(g1, t1)| g1 != t1 && g == *t1)
-                .count();
-
             let guess_count = guess
                 .chars()
                 .enumerate()
                 .filter(|(idx2, g2)| *idx2 <= idx && *g2 == g)
                 .count();
 
-            if guess_count <= exclued_matches_target_count && guess_count != 0 {
+            let exclued_matches_target_count = zipped_words.clone()
+                // Remove characters to be marked greem
+                .filter(|(g1, t1)| g1 != t1 && g == *t1)
+                .count();
+
+            if guess_count <= exclued_matches_target_count {
                 res += usize::pow(3, idx.try_into().unwrap());
             }
         }
