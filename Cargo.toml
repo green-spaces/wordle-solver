@@ -11,10 +11,13 @@ edition = "2021"
 criterion = "0.3"
 lazy_static = "1.4.0"
 
-# [[bench]]
-# name = "outcome_bench"
-# harness = false
-
 [[bench]]
 name = "first_guess"
 harness = false
+debug = true
+
+[profile.bench]
+debug = true
+
+[profile.release]
+debug = true

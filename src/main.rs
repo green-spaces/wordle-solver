@@ -11,16 +11,17 @@ fn main() {
     let dictionary = load_dictionary(WORD_SOURCE);
     let mut candidates = dictionary.clone();
     println!("Five Letter Words: {}", dictionary.len());
+    let mut votes: Vec<f32> = vec![0.0; usize::pow(3, candidates[0].len().try_into().unwrap())];
 
     while !candidates.is_empty() {
         let guess_full = optimial_guess(&candidates, &dictionary);
         println!(
             "Full: {} => {}",
             guess_full,
-            entropy_votes(&guess_full, &candidates)
+            entropy_votes(&guess_full, &candidates, &mut votes)
         );
         let response = read_wordle_output();
-        candidates = prune_candidates(&guess_full, &response, &candidates);
+        candidates = prune_candidates(guess_full, &response, &candidates);
     }
 }
 

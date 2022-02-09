@@ -14,7 +14,7 @@ lazy_static! {
 
 fn time_to_first_guess(i: i32) -> i32 {
     let candidates = DICTIONARY.clone();
-    let guess_full = optimial_guess(&candidates, &DICTIONARY);
+    let _guess_full = optimial_guess(&candidates, &DICTIONARY);
     i * 2
 }
 

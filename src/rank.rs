@@ -1,5 +1,21 @@
 use super::guess_result::GuessResult;
 
+pub fn outcome2(guess: &str, target: &str) -> GuessResult {
+    let mut res = String::new();
+
+    // mark greens
+    guess.chars().zip(target.chars()).for_each(|(g, t)| {
+        if g == t {
+            res.push('g');
+        } else {
+            res.push('b');
+        }
+    });
+    
+
+    GuessResult::new(&res)
+}
+
 pub fn outcome(guess: &str, target: &str) -> GuessResult {
     let mut res = String::new();
 
@@ -28,6 +44,7 @@ pub fn outcome(guess: &str, target: &str) -> GuessResult {
     }
     GuessResult::new(&res)
 }
+
 
 #[cfg(test)]
 mod tests {

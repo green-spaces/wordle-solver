@@ -1,13 +1,15 @@
 use super::rank::outcome;
 
-pub fn optimial_guess(candidates: &[String], dictionary: &[String]) -> String {
-    let mut best_word: String = dictionary[0].clone();
+pub fn optimial_guess<'a>(candidates: &[String], dictionary: &'a [String]) -> &'a String {
+    let mut best_word: &String = &dictionary[0];
     let mut max_entropy = f32::MIN;
 
+    let mut votes: Vec<f32> = vec![0.0; usize::pow(3, candidates[0].len().try_into().unwrap())];
+
     for word in dictionary.iter() {
-        let res = entropy_votes(word, candidates);
+        let res = entropy_votes(word, candidates, &mut votes);
         if res > max_entropy || (res == max_entropy && candidates.iter().any(|cad| cad == word)) {
-            best_word = word.clone();
+            best_word = &word;
             max_entropy = res;
         }
     }
@@ -15,24 +17,26 @@ pub fn optimial_guess(candidates: &[String], dictionary: &[String]) -> String {
 }
 
 /// Returns the worst case remaining number of words
-pub fn entropy_votes(word: &str, word_list: &[String]) -> f32 {
-    let votes = matching_votes(word, word_list);
-    entropy(&votes)
+pub fn entropy_votes(word: &str, word_list: &[String], votes: &mut [f32]) -> f32 {
+    matching_votes(word, word_list, votes);
+    entropy(votes)
 }
 
-fn matching_votes(word: &str, word_list: &[String]) -> Vec<usize> {
-    let mut votes: Vec<usize> = vec![0; usize::pow(3, word.len().try_into().unwrap())];
-    for guess in word_list {
-        votes[outcome(word, guess).score()] += 1;
+fn matching_votes(word: &str, word_list: &[String], votes: &mut [f32]) {
+  for i in 0..votes.len() {
+    votes[i] = 0.0;
+  }
+
+  for guess in word_list {
+        votes[outcome(word, guess).score()] += 1.0;
     }
-    votes
 }
 
-fn entropy(votes: &[usize]) -> f32 {
+fn entropy(votes: &[f32]) -> f32 {
     let incorrect = &votes[..votes.len()];
-    let count = incorrect.iter().sum::<usize>() as f32;
+    let log_count = f32::ln(incorrect.iter().sum::<f32>()) ;
     incorrect
         .iter()
-        .map(|v| -(*v as f32) / count * f32::ln((*v as f32 + 0.01) / count))
+        .map(|v| - *v * (f32::ln(*v ) - log_count))
         .sum::<f32>()
 }
